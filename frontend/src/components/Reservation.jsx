@@ -18,7 +18,7 @@ const Reservation = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/reservation/send",
+        "http://localhost:5000/api/v1/reservation/send",
         { firstName, lastName, email, phone, date, time },
         {
           headers: {
@@ -27,6 +27,7 @@ const Reservation = () => {
           withCredentials: true,
         }
       );
+      console.log("API Response: ",data);
       toast.success(data.message);
       setFirstName("");
       setLastName("");
@@ -36,7 +37,18 @@ const Reservation = () => {
       setDate("");
       navigate("/success");
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.error("Error: ", error);
+      // toast.error(error.response.data.message);
+      if (error.response) {
+        // If response exists, show the message from the server
+        toast.error(error.response.data.message);
+      } else if (error.request) {
+        // If there's no response (network error, etc.), show a generic error message
+        toast.error("An error occurred. Please try again later.");
+      }
+      else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
